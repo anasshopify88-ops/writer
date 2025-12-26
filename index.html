@@ -103,6 +103,8 @@
   button{padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--text);cursor:pointer}
   button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
   button.loading{opacity:.7;pointer-events:none}
+  button.danger{background:#fff;border-color:#fecaca;color:#b91c1c}
+  button.danger:hover{border-color:#fca5a5}
 
   .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
   .tab{
@@ -229,6 +231,7 @@
               <div class="chips">
                 <span class="chip" id="targetInfo">الهدف: 1200 كلمة</span>
                 <span class="chip" id="modeInfo">وضع: API</span>
+                <span class="chip" id="timeoutInfo">مهلة: —</span>
               </div>
             </div>
 
@@ -236,6 +239,7 @@
               <button class="primary" id="generateBtn">توليد المقال</button>
               <button id="clearBtn">مسح</button>
               <button class="primary" id="copyBtn">نسخ المخرجات</button>
+              <button class="danger" id="cancelBtn" disabled>إلغاء</button>
             </div>
 
             <div id="status" class="status hidden"></div>
@@ -260,12 +264,9 @@
   </div>
 
 <script>
-/* ========= إعدادات API =========
-   أنشئ Worker جديد مثلاً: article-generate
-   ثم ضع رابط الـ workers.dev هنا (أو دومين مخصص لاحقًا)
-*/
+/* ========= إعدادات API ========= */
 const API_BASE = "https://article-generate.anasshopify88.workers.dev";
-  const ENDPOINTS = {
+const ENDPOINTS = {
   gen: API_BASE + "/api/generate",
   ping: API_BASE + "/ping"
 };
@@ -280,8 +281,21 @@ const typeEl = $('#type');
 const ideaEl = $('#idea');
 const lengthEl = $('#length');
 const targetInfo = $('#targetInfo');
+const timeoutInfo = $('#timeoutInfo');
+
+const generateBtn = $('#generateBtn');
+const clearBtn = $('#clearBtn');
+const copyBtn = $('#copyBtn');
+const cancelBtn = $('#cancelBtn');
 
 const LENGTH_MAP = { short: 700, medium: 1200, long: 1800 };
+
+// مهلة ذكية حسب الطول (مهم لتقليل AbortError)
+function timeoutForLength(len){
+  if(len === 'long') return 220000;   // 3:40 دقيقة
+  if(len === 'short') return 90000;   // 1:30 دقيقة
+  return 140000;                      // 2:20 دقيقة
+}
 
 function setStatus(kind, msg){
   statusEl.className = 'status ' + (kind||'') + (msg ? '' : ' hidden');
@@ -298,7 +312,14 @@ function clearErr(){
 function getTargetWords(){
   return LENGTH_MAP[lengthEl.value] || 1200;
 }
+function msToNice(ms){
+  const s = Math.round(ms/1000);
+  const m = Math.floor(s/60);
+  const r = s % 60;
+  return m ? `${m}:${String(r).padStart(2,'0')} دقيقة` : `${s} ثانية`;
+}
 
+// نعرض FAQ بدون ** عشان ما يطلع تنسيق غريب
 function fmtOutput(data){
   const outline = (data.outline || '').trim();
   const article  = (data.article || '').trim();
@@ -307,35 +328,94 @@ function fmtOutput(data){
   const faqText = faq.map((x,i)=> {
     const q = (x.q || '').trim();
     const a = (x.a || '').trim();
-    return `**س${i+1}: ${q}**\n${a}`;
+    return `س${i+1}: ${q}\n${a}`;
   }).join('\n\n');
 
+  // نخلي "الكل" بدون ## وبدون ** لتفادي ظهورها كنص خام
   return {
     outline: outline || '—',
     article: article || '—',
     faq: faqText || '—',
-    all: `## Outline\n\n${outline}\n\n---\n\n## Article\n\n${article}\n\n---\n\n## FAQ\n\n${faqText}`
+    all: `OUTLINE\n\n${outline}\n\n--------------------\n\nARTICLE\n\n${article}\n\n--------------------\n\nFAQ\n\n${faqText}`
   };
 }
 
-async function aiGenerate(payload){
-  const controller = new AbortController();
-  const t = setTimeout(()=>controller.abort(), 60000);
-  try{
-    const resp = await fetch(ENDPOINTS.gen, {
-      method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body: JSON.stringify(payload),
-      mode:'cors', cache:'no-store', signal: controller.signal
-    });
-    const text = await resp.text();
-    if(!resp.ok) throw new Error(text || `HTTP ${resp.status}`);
-    return JSON.parse(text);
-  } finally {
-    clearTimeout(t);
+/* ========= توليد عبر API مع تحكم كامل بالـ Abort ========= */
+let currentController = null; // controller للطلب الحالي فقط
+let currentTimeoutId = null;
+
+function setUIBusy(isBusy){
+  generateBtn.disabled = isBusy;
+  clearBtn.disabled = isBusy;
+  copyBtn.disabled = isBusy;
+  cancelBtn.disabled = !isBusy;
+
+  if(isBusy){
+    generateBtn.classList.add('loading');
+    generateBtn.textContent = '... جاري التوليد';
+  } else {
+    generateBtn.classList.remove('loading');
+    generateBtn.textContent = 'توليد المقال';
   }
 }
 
+async function aiGenerate(payload){
+  // لا تلغي أي طلب سابق تلقائيًا — فقط لو المستخدم ضغط "إلغاء"
+  if(currentController){
+    // لو فيه طلب شغال، امنع إنشاء طلب جديد بدل ما تلغي القديم
+    throw new Error('يوجد طلب توليد جاري الآن. انتظر حتى ينتهي أو اضغط "إلغاء".');
+  }
+
+  const controller = new AbortController();
+  currentController = controller;
+
+  const timeoutMs = timeoutForLength(payload.length);
+  timeoutInfo.textContent = `مهلة: ${msToNice(timeoutMs)}`;
+
+  currentTimeoutId = setTimeout(()=> {
+    try { controller.abort(); } catch(e){}
+  }, timeoutMs);
+
+  let resp = null;
+  let text = '';
+
+  try{
+    resp = await fetch(ENDPOINTS.gen, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify(payload),
+      mode:'cors',
+      cache:'no-store',
+      signal: controller.signal
+    });
+
+    text = await resp.text();
+
+    // لو رجع JSON خطأ من Worker نعرضه بشكل واضح
+    if(!resp.ok){
+      let msg = text || `HTTP ${resp.status}`;
+      try{
+        const j = JSON.parse(text);
+        if(j?.message) msg = j.message + (j?.hint ? ` — ${j.hint}` : '');
+      }catch(e){}
+      throw new Error(msg);
+    }
+
+    // نجاح
+    return JSON.parse(text);
+  } catch(e){
+    if(e?.name === 'AbortError'){
+      throw new Error('تم إلغاء الطلب (انتهت المهلة أو تم الضغط على "إلغاء"). جرّب مرة ثانية، أو اختر "متوسط" بدل "طويل" إذا شبكتك بطيئة.');
+    }
+    throw e;
+  } finally {
+    if(currentTimeoutId) clearTimeout(currentTimeoutId);
+    currentTimeoutId = null;
+    currentController = null;
+  }
+}
+
+/* ========= state + tabs ========= */
 let current = { outline:'', article:'', faq:'', all:'' };
 let activeTab = 'outline';
 
@@ -352,7 +432,8 @@ document.querySelectorAll('.tab').forEach(btn=>{
 });
 
 $('#backBtn').addEventListener('click', ()=>history.back());
-$('#clearBtn').addEventListener('click', ()=>{
+
+clearBtn.addEventListener('click', ()=>{
   ideaEl.value = '';
   current = { outline:'', article:'', faq:'', all:'' };
   activeTab = 'outline';
@@ -363,7 +444,7 @@ $('#clearBtn').addEventListener('click', ()=>{
   clearErr();
 });
 
-$('#copyBtn').addEventListener('click', async ()=>{
+copyBtn.addEventListener('click', async ()=>{
   try{
     await navigator.clipboard.writeText(current.all || outBox.textContent || '');
     setStatus('ok', 'تم النسخ.');
@@ -374,17 +455,25 @@ $('#copyBtn').addEventListener('click', async ()=>{
 
 lengthEl.addEventListener('change', ()=>{
   targetInfo.textContent = `الهدف: ${getTargetWords()} كلمة`;
+  timeoutInfo.textContent = `مهلة: ${msToNice(timeoutForLength(lengthEl.value))}`;
 });
 
-$('#generateBtn').addEventListener('click', async ()=>{
+cancelBtn.addEventListener('click', ()=>{
+  // إلغاء يدوي فقط
+  if(currentController){
+    try { currentController.abort(); } catch(e){}
+    setStatus('warn', 'تم إلغاء التوليد.');
+  }
+});
+
+generateBtn.addEventListener('click', async ()=>{
   clearErr(); setStatus('', '');
 
   const idea = (ideaEl.value || '').trim();
   if(!idea){ setStatus('warn', 'اكتب الفكرة/العنوان أولاً.'); return; }
 
-  const btn = $('#generateBtn');
-  btn.classList.add('loading');
-  btn.textContent = '... جاري التوليد';
+  setUIBusy(true);
+  setStatus('warn', 'جاري التوليد… لا تغلق الصفحة.');
 
   try{
     const payload = {
@@ -403,15 +492,15 @@ $('#generateBtn').addEventListener('click', async ()=>{
     setStatus('ok', 'تم توليد المقال بنجاح.');
   }catch(e){
     setStatus('bad', 'فشل التوليد.');
-    showErr('خطأ: ' + String(e||''));
+    showErr('خطأ: ' + String(e?.message || e || ''));
   }finally{
-    btn.classList.remove('loading');
-    btn.textContent = 'توليد المقال';
+    setUIBusy(false);
   }
 });
 
 // init
 targetInfo.textContent = `الهدف: ${getTargetWords()} كلمة`;
+timeoutInfo.textContent = `مهلة: ${msToNice(timeoutForLength(lengthEl.value))}`;
 </script>
 </body>
 </html>
