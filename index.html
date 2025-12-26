@@ -290,7 +290,7 @@ const cancelBtn = $('#cancelBtn');
 
 const LENGTH_MAP = { short: 700, medium: 1200, long: 1800 };
 
-// مهلة ذكية حسب الطول (مهم لتقليل AbortError)
+/* ===== مهلة ذكية حسب الطول ===== */
 function timeoutForLength(len){
   if(len === 'long') return 220000;   // 3:40 دقيقة
   if(len === 'short') return 90000;   // 1:30 دقيقة
@@ -312,14 +312,46 @@ function clearErr(){
 function getTargetWords(){
   return LENGTH_MAP[lengthEl.value] || 1200;
 }
+
 function msToNice(ms){
-  const s = Math.round(ms/1000);
+  const s = Math.max(0, Math.round(ms/1000));
   const m = Math.floor(s/60);
   const r = s % 60;
   return m ? `${m}:${String(r).padStart(2,'0')} دقيقة` : `${s} ثانية`;
 }
 
-// نعرض FAQ بدون ** عشان ما يطلع تنسيق غريب
+/* ===== عدّاد تنازلي للمهلة ===== */
+let countdownTimer = null;
+let countdownEndsAt = 0;
+let countdownTotalMs = 0;
+
+function stopCountdown(){
+  if(countdownTimer) clearInterval(countdownTimer);
+  countdownTimer = null;
+  countdownEndsAt = 0;
+  countdownTotalMs = 0;
+}
+
+function startCountdown(totalMs){
+  stopCountdown();
+  countdownTotalMs = totalMs;
+  countdownEndsAt = Date.now() + totalMs;
+
+  const render = () => {
+    const remaining = countdownEndsAt - Date.now();
+    const base = `مهلة: ${msToNice(countdownTotalMs)}`;
+    if (remaining <= 0){
+      timeoutInfo.textContent = `${base} (متبقي: 0:00)`;
+      return;
+    }
+    timeoutInfo.textContent = `${base} (متبقي: ${msToNice(remaining)})`;
+  };
+
+  render();
+  countdownTimer = setInterval(render, 1000);
+}
+
+/* ===== عرض FAQ بدون ** ===== */
 function fmtOutput(data){
   const outline = (data.outline || '').trim();
   const article  = (data.article || '').trim();
@@ -331,7 +363,6 @@ function fmtOutput(data){
     return `س${i+1}: ${q}\n${a}`;
   }).join('\n\n');
 
-  // نخلي "الكل" بدون ## وبدون ** لتفادي ظهورها كنص خام
   return {
     outline: outline || '—',
     article: article || '—',
@@ -340,8 +371,8 @@ function fmtOutput(data){
   };
 }
 
-/* ========= توليد عبر API مع تحكم كامل بالـ Abort ========= */
-let currentController = null; // controller للطلب الحالي فقط
+/* ===== توليد عبر API مع تحكم Abort ===== */
+let currentController = null;
 let currentTimeoutId = null;
 
 function setUIBusy(isBusy){
@@ -360,9 +391,7 @@ function setUIBusy(isBusy){
 }
 
 async function aiGenerate(payload){
-  // لا تلغي أي طلب سابق تلقائيًا — فقط لو المستخدم ضغط "إلغاء"
   if(currentController){
-    // لو فيه طلب شغال، امنع إنشاء طلب جديد بدل ما تلغي القديم
     throw new Error('يوجد طلب توليد جاري الآن. انتظر حتى ينتهي أو اضغط "إلغاء".');
   }
 
@@ -370,7 +399,9 @@ async function aiGenerate(payload){
   currentController = controller;
 
   const timeoutMs = timeoutForLength(payload.length);
-  timeoutInfo.textContent = `مهلة: ${msToNice(timeoutMs)}`;
+
+  // ✅ ابدأ العداد التنازلي
+  startCountdown(timeoutMs);
 
   currentTimeoutId = setTimeout(()=> {
     try { controller.abort(); } catch(e){}
@@ -391,7 +422,6 @@ async function aiGenerate(payload){
 
     text = await resp.text();
 
-    // لو رجع JSON خطأ من Worker نعرضه بشكل واضح
     if(!resp.ok){
       let msg = text || `HTTP ${resp.status}`;
       try{
@@ -401,7 +431,6 @@ async function aiGenerate(payload){
       throw new Error(msg);
     }
 
-    // نجاح
     return JSON.parse(text);
   } catch(e){
     if(e?.name === 'AbortError'){
@@ -412,10 +441,16 @@ async function aiGenerate(payload){
     if(currentTimeoutId) clearTimeout(currentTimeoutId);
     currentTimeoutId = null;
     currentController = null;
+
+    // ✅ أوقف العداد بعد انتهاء الطلب (نجاح/فشل/إلغاء)
+    stopCountdown();
+
+    // أعد النص الافتراضي للمهلة حسب الاختيار الحالي
+    timeoutInfo.textContent = `مهلة: ${msToNice(timeoutForLength(lengthEl.value))}`;
   }
 }
 
-/* ========= state + tabs ========= */
+/* ===== tabs ===== */
 let current = { outline:'', article:'', faq:'', all:'' };
 let activeTab = 'outline';
 
@@ -459,7 +494,6 @@ lengthEl.addEventListener('change', ()=>{
 });
 
 cancelBtn.addEventListener('click', ()=>{
-  // إلغاء يدوي فقط
   if(currentController){
     try { currentController.abort(); } catch(e){}
     setStatus('warn', 'تم إلغاء التوليد.');
