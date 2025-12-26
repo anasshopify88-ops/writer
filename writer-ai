@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover">
+<title>أداة كتابة المقالات بالذكاء الاصطناعي — متوافقة مع SEO</title>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#f7f8fb; --bg-2:#f1f5fb; --card:#ffffff; --text:#0c1424; --muted:#5b6472; --accent:#2563eb;
+    --ok:#15803d; --warn:#d97706; --error:#dc2626; --border:#e6e9f2; --shadow:0 6px 16px rgba(0,0,0,.08);
+    --radius:16px; --radius-sm:12px;
+    --sidebar-w:280px;
+    --fs-base:13px; --fs-sm:11.5px;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font-family:"Cairo",system-ui,Arial,Helvetica,sans-serif; line-height:1.65;
+    background:linear-gradient(180deg,var(--bg),var(--bg-2)); color:var(--text);
+    -webkit-font-smoothing:antialiased; overflow-x:hidden; font-size:var(--fs-base);
+  }
+  .wrap{max-width:1200px;margin:0 auto;padding:24px 16px 64px}
+
+  .topbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .btn{
+    border:1px solid var(--border); background:linear-gradient(180deg,#fff,#f9fbff);
+    color:var(--text); padding:8px 12px; border-radius:14px; cursor:pointer; font-weight:700; box-shadow:var(--shadow);
+    transition:transform .18s ease, box-shadow .25s ease, border-color .25s ease, background .25s ease;
+    font-size:12px; text-decoration:none; display:inline-flex; align-items:center; gap:6px;
+  }
+  .btn:hover{transform:translateY(-2px); border-color:#cbd5e1}
+  .btn.home{background:#000; color:#fff; border-color:#000}
+  .btn:disabled{opacity:.6; cursor:not-allowed}
+  .btn.contactTop{
+    background: var(--accent);
+    border-color: var(--accent);
+    color:#fff;
+    justify-content:center;
+  }
+  .btn.contactTop:hover{ background: var(--accent); border-color: var(--accent); color:#fff; }
+
+  .card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:14px; box-shadow:var(--shadow)}
+  .titleRow{display:flex;align-items:center;gap:10px;justify-content:space-between}
+  h1{margin:0;font-size:clamp(18px,2.2vw,24px);font-weight:800;letter-spacing:.2px}
+  .sub{margin-top:6px;color:var(--muted);font-size:var(--fs-sm)}
+  .logo{width:100%; max-width:180px; align-self:center; object-fit:contain; object-position:center; background:#fff; border-radius:12px; border:1px solid var(--border); padding:8px}
+  .title-logo{width:180px; max-width:180px; align-self:center}
+
+  .layout{
+    display:grid;
+    grid-template-columns: var(--sidebar-w) 1fr;
+    gap:14px;
+    align-items:stretch;
+  }
+
+  #sidePanel{display:flex; height:100%; min-height:0; overflow:hidden;}
+  @media (min-width:981px){ #sidePanel{ contain:size; } }
+  .sidebar-card{
+    flex:1 1 auto; height:100%;
+    display:flex; flex-direction:column; gap:10px; min-height:0; overflow:auto;
+  }
+  .avatar{width:112px;height:112px;border-radius:50%;background:#fff;padding:6px;object-fit:contain;object-position:center;border:1px solid var(--border);align-self:center}
+  .s-list{display:grid; gap:8px}
+  .s-item a{
+    display:block; padding:8px 10px; border:1px solid var(--border); border-radius:12px; background:#fff;
+    color:#0f172a; text-decoration:none; font-weight:600; transition:transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+    box-shadow:0 4px 12px rgba(15,23,42,.05); font-size:13px;
+  }
+  .s-item a:hover{transform:translateY(-2px); border-color:#cbd5e1; box-shadow:0 8px 18px rgba(15,23,42,.08)}
+  .s-text{
+    display:block; padding:8px 10px; border:1px solid var(--border); border-radius:12px; background:#fff;
+    color:#0f172a; font-weight:600; box-shadow:0 4px 12px rgba(15,23,42,.05); font-size:13px;
+  }
+
+  #toolBox{display:block; min-height:0}
+  .row{
+    display:grid; gap:16px; align-items:stretch;
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+    grid-template-areas:"inputs outputs";
+    min-width:0;
+  }
+  @media (max-width:1024px){
+    .row{ grid-template-columns:1fr; grid-template-areas:"inputs" "outputs"; gap:12px; }
+  }
+
+  .card.section{padding:16px}
+  .field{margin-bottom:14px}
+  .field:last-child{ margin-bottom: 0 }
+  .label{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;font-weight:700;font-size:14px}
+
+  input[type="text"], select, textarea{
+    width:100%;padding:14px;border:1px solid var(--border);border-radius:14px;background:#fff;color:var(--text)
+  }
+  textarea{min-height:160px;max-height:50vh;resize:vertical}
+  .hint{font-size:12px;color:var(--muted)}
+
+  .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+  button{padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--text);cursor:pointer}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.loading{opacity:.7;pointer-events:none}
+
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .tab{
+    padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:#fff;
+    font-weight:800;font-size:12px;cursor:pointer;
+  }
+  .tab.active{border-color:#cbd5e1; box-shadow:0 6px 16px rgba(15,23,42,.08)}
+  pre.out{
+    margin:0; padding:14px; border:1px solid var(--border); border-radius:14px;
+    background:#fff; white-space:pre-wrap; word-break:break-word; min-height:260px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+    font-size:12px;
+  }
+
+  .status{font-size:12px;margin-top:8px;display:flex;align-items:center;gap:8px}
+  .status.ok{color:var(--ok)} .status.warn{color:var(--warn)} .status.bad{color:var(--error)}
+  .status.hidden{display:none}
+  .err{margin-top:8px;font-size:12px;color:var(--error)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .chip{padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:12px;color:var(--muted)}
+
+  @media (max-width:980px){
+    .layout{grid-template-columns:1fr}
+    #sidePanel{height:auto; overflow:visible;}
+    .avatar{width:104px;height:104px}
+  }
+</style>
+</head>
+
+<body>
+  <div class="wrap" id="app">
+    <div class="topbar">
+      <button class="btn" id="backBtn">رجوع</button>
+      <a class="btn home" id="homeBtn" href="https://anasrashed.com" rel="noopener">الرئيسية</a>
+      <a class="btn contactTop" id="contactTopBtn" href="https://contact.anasrashed.com" target="_blank" rel="noopener">تواصل معي</a>
+    </div>
+
+    <div class="card">
+      <div class="titleRow">
+        <div>
+          <h1>أداة كتابة المقالات بالذكاء الاصطناعي (SEO)</h1>
+          <div class="sub">اكتب الفكرة، واختر اللغة والنوع والطول — واحصل على Outline + مقال كامل + FAQ.</div>
+        </div>
+        <img class="logo title-logo" src="https://i.imgur.com/meUEoP7.png" alt="الشعار"
+             onerror="this.onerror=null; this.src='https://i.imgur.com/meUEoP7.jpg';">
+      </div>
+    </div>
+
+    <div class="layout" style="margin-top:12px">
+      <aside id="sidePanel">
+        <div class="card sidebar-card">
+          <img class="avatar" src="https://i.imgur.com/B3UkEQ0.jpg" alt="صورتي" referrerpolicy="no-referrer"
+               onerror="this.onerror=null; this.src='https://i.imgur.com/B3UkEQ0.png';">
+
+          <div class="s-list">
+            <div class="s-item"><a href="https://whoami.anasrashed.com" target="_blank" rel="noopener">من أنا؟</a></div>
+
+            <div class="s-item">
+              <a href="https://anasrashed.gumroad.com/l/seo-book-for-ecommerce" target="_blank" rel="noopener">
+                كتاب دليل السيو الشامل
+              </a>
+            </div>
+
+            <div class="sub" style="text-align:center; font-size:18px; margin-top:10px;">
+              <b>خدماتي</b>
+            </div>
+
+            <div class="s-item"><span class="s-text">تحسين سيو المتجر</span></div>
+            <div class="s-item"><span class="s-text">حملة باك لينك شهرية</span></div>
+            <div class="s-item"><span class="s-text">استخراج الكلمات المفتاحية للمنافسين</span></div>
+            <div class="s-item"><span class="s-text">تفعيل خريطة الموقع للباقة بلس</span></div>
+
+            <div class="sub" style="text-align:center; font-size:18px; margin-top:10px;">
+              <b>أدوات سيو احترافية</b>
+            </div>
+
+            <div class="s-item"><a href="https://serp.anasrashed.com" target="_blank" rel="noopener">أداة SERP بالذكاء الاصطناعي</a></div>
+            <div class="s-item"><a href="https://smg.anasrashed.com" target="_blank" rel="noopener">أداة منشئ خريطة الموقع</a></div>
+            <div class="s-item"><a href="https://keywords.anasrashed.com" target="_blank" rel="noopener">أداة الكلمات المفتاحية</a></div>
+            <div class="s-item"><a href="https://checker.anasrashed.com" target="_blank" rel="noopener">أداة فحص الموقع</a></div>
+          </div>
+        </div>
+      </aside>
+
+      <section id="toolBox">
+        <div class="row">
+
+          <!-- Inputs -->
+          <section class="card section" style="grid-area:inputs">
+            <div class="field">
+              <div class="label"><label for="lang">اللغة</label></div>
+              <select id="lang">
+                <option value="ar" selected>عربي</option>
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+              </select>
+              <div class="hint">سيتم كتابة المقال بالكامل بهذه اللغة.</div>
+            </div>
+
+            <div class="field">
+              <div class="label"><label for="type">نوع المقال</label></div>
+              <select id="type">
+                <option value="definition">تعريفي</option>
+                <option value="guide" selected>دليل</option>
+                <option value="comparison">مقارنة</option>
+                <option value="list">قائمة</option>
+                <option value="problem">حل مشكلة</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <div class="label"><label for="idea">الفكرة/العنوان</label></div>
+              <input id="idea" type="text" placeholder="مثال: كيف تختار كلمات مفتاحية لمتجر إلكتروني؟">
+              <div class="hint">كلما كان الموضوع واضحًا، كانت النتيجة أدق.</div>
+            </div>
+
+            <div class="field">
+              <div class="label"><label for="length">طول المقال</label></div>
+              <select id="length">
+                <option value="short">قصير (≈ 700 كلمة)</option>
+                <option value="medium" selected>متوسط (≈ 1200 كلمة)</option>
+                <option value="long">طويل (≈ 1800 كلمة)</option>
+              </select>
+              <div class="chips">
+                <span class="chip" id="targetInfo">الهدف: 1200 كلمة</span>
+                <span class="chip" id="modeInfo">وضع: API</span>
+              </div>
+            </div>
+
+            <div class="btns">
+              <button class="primary" id="generateBtn">توليد المقال</button>
+              <button id="clearBtn">مسح</button>
+              <button class="primary" id="copyBtn">نسخ المخرجات</button>
+            </div>
+
+            <div id="status" class="status hidden"></div>
+            <div id="err" class="err" hidden></div>
+          </section>
+
+          <!-- Outputs -->
+          <section class="card section" style="grid-area:outputs">
+            <div class="tabs">
+              <button class="tab active" data-tab="outline">Outline</button>
+              <button class="tab" data-tab="article">المقال</button>
+              <button class="tab" data-tab="faq">FAQ</button>
+            </div>
+
+            <pre class="out" id="outBox">جاهز… اكتب الفكرة واضغط "توليد المقال".</pre>
+            <div class="hint" style="margin-top:10px">النتيجة بصيغة نص/Markdown لتكون سهلة النسخ والتحرير.</div>
+          </section>
+
+        </div>
+      </section>
+    </div>
+  </div>
+
+<script>
+/* ========= إعدادات API =========
+   أنشئ Worker جديد مثلاً: article-generate
+   ثم ضع رابط الـ workers.dev هنا (أو دومين مخصص لاحقًا)
+*/
+const API_BASE = "https://article-generate.anasshopify88.workers.dev";
+  const ENDPOINTS = {
+  gen: API_BASE + "/api/generate",
+  ping: API_BASE + "/ping"
+};
+
+const $ = s => document.querySelector(s);
+const statusEl = $('#status');
+const errEl = $('#err');
+const outBox = $('#outBox');
+
+const langEl = $('#lang');
+const typeEl = $('#type');
+const ideaEl = $('#idea');
+const lengthEl = $('#length');
+const targetInfo = $('#targetInfo');
+
+const LENGTH_MAP = { short: 700, medium: 1200, long: 1800 };
+
+function setStatus(kind, msg){
+  statusEl.className = 'status ' + (kind||'') + (msg ? '' : ' hidden');
+  statusEl.textContent = msg || '';
+}
+function showErr(msg){
+  errEl.hidden = false;
+  errEl.textContent = msg;
+}
+function clearErr(){
+  errEl.hidden = true;
+  errEl.textContent = '';
+}
+function getTargetWords(){
+  return LENGTH_MAP[lengthEl.value] || 1200;
+}
+
+function fmtOutput(data){
+  const outline = (data.outline || '').trim();
+  const article  = (data.article || '').trim();
+  const faq = Array.isArray(data.faq) ? data.faq : [];
+
+  const faqText = faq.map((x,i)=> {
+    const q = (x.q || '').trim();
+    const a = (x.a || '').trim();
+    return `**س${i+1}: ${q}**\n${a}`;
+  }).join('\n\n');
+
+  return {
+    outline: outline || '—',
+    article: article || '—',
+    faq: faqText || '—',
+    all: `## Outline\n\n${outline}\n\n---\n\n## Article\n\n${article}\n\n---\n\n## FAQ\n\n${faqText}`
+  };
+}
+
+async function aiGenerate(payload){
+  const controller = new AbortController();
+  const t = setTimeout(()=>controller.abort(), 60000);
+  try{
+    const resp = await fetch(ENDPOINTS.gen, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify(payload),
+      mode:'cors', cache:'no-store', signal: controller.signal
+    });
+    const text = await resp.text();
+    if(!resp.ok) throw new Error(text || `HTTP ${resp.status}`);
+    return JSON.parse(text);
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+let current = { outline:'', article:'', faq:'', all:'' };
+let activeTab = 'outline';
+
+function renderTab(){
+  outBox.textContent = current[activeTab] || '—';
+}
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeTab = btn.dataset.tab;
+    renderTab();
+  });
+});
+
+$('#backBtn').addEventListener('click', ()=>history.back());
+$('#clearBtn').addEventListener('click', ()=>{
+  ideaEl.value = '';
+  current = { outline:'', article:'', faq:'', all:'' };
+  activeTab = 'outline';
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.tab[data-tab="outline"]').classList.add('active');
+  outBox.textContent = 'جاهز… اكتب الفكرة واضغط "توليد المقال".';
+  setStatus('', '');
+  clearErr();
+});
+
+$('#copyBtn').addEventListener('click', async ()=>{
+  try{
+    await navigator.clipboard.writeText(current.all || outBox.textContent || '');
+    setStatus('ok', 'تم النسخ.');
+  }catch(e){
+    setStatus('bad', 'تعذر النسخ.');
+  }
+});
+
+lengthEl.addEventListener('change', ()=>{
+  targetInfo.textContent = `الهدف: ${getTargetWords()} كلمة`;
+});
+
+$('#generateBtn').addEventListener('click', async ()=>{
+  clearErr(); setStatus('', '');
+
+  const idea = (ideaEl.value || '').trim();
+  if(!idea){ setStatus('warn', 'اكتب الفكرة/العنوان أولاً.'); return; }
+
+  const btn = $('#generateBtn');
+  btn.classList.add('loading');
+  btn.textContent = '... جاري التوليد';
+
+  try{
+    const payload = {
+      idea,
+      lang: langEl.value,
+      kind: typeEl.value,
+      length: lengthEl.value,
+      target_words: getTargetWords()
+    };
+
+    const data = await aiGenerate(payload);
+    const out = fmtOutput(data);
+    current = out;
+    renderTab();
+
+    setStatus('ok', 'تم توليد المقال بنجاح.');
+  }catch(e){
+    setStatus('bad', 'فشل التوليد.');
+    showErr('خطأ: ' + String(e||''));
+  }finally{
+    btn.classList.remove('loading');
+    btn.textContent = 'توليد المقال';
+  }
+});
+
+// init
+targetInfo.textContent = `الهدف: ${getTargetWords()} كلمة`;
+</script>
+</body>
+</html>
