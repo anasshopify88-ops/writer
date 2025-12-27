@@ -131,6 +131,9 @@
     #sidePanel{height:auto; overflow:visible;}
     .avatar{width:104px;height:104px}
   }
+
+  /* إخفاء "وضع API" */
+  #modeInfo{display:none !important;}
 </style>
 </head>
 
@@ -146,7 +149,7 @@
       <div class="titleRow">
         <div>
           <h1>أداة كتابة المقالات بالذكاء الاصطناعي (SEO)</h1>
-          <div class="sub">اكتب الفكرة، واختر اللغة والنوع والطول — واحصل على Outline + مقال كامل + FAQ.</div>
+          <div class="sub">اكتب الفكرة، واختر اللغة والنوع والطول — واحصل على محتوى + مقالة كاملة + الأسئلة الشائعة.</div>
         </div>
         <img class="logo title-logo" src="https://i.imgur.com/meUEoP7.png" alt="الشعار"
              onerror="this.onerror=null; this.src='https://i.imgur.com/meUEoP7.jpg';">
@@ -168,12 +171,16 @@
               </a>
             </div>
 
+            <div class="s-item">
+              <a href="https://blog.anasrashed.com" target="_blank" rel="noopener">المدونة</a>
+            </div>
+
             <div class="sub" style="text-align:center; font-size:18px; margin-top:10px;">
               <b>خدماتي</b>
             </div>
 
-            <div class="s-item"><span class="s-text">تحسين سيو المتجر</span></div>
-            <div class="s-item"><span class="s-text">حملة باك لينك شهرية</span></div>
+            <div class="s-item"><span class="s-text">تحسين داخلي</span></div>
+            <div class="s-item"><span class="s-text">تحسين خارجي</span></div>
             <div class="s-item"><span class="s-text">استخراج الكلمات المفتاحية للمنافسين</span></div>
             <div class="s-item"><span class="s-text">تفعيل خريطة الموقع للباقة بلس</span></div>
 
@@ -181,7 +188,8 @@
               <b>أدوات سيو احترافية</b>
             </div>
 
-            <div class="s-item"><a href="https://serp.anasrashed.com" target="_blank" rel="noopener">أداة SERP بالذكاء الاصطناعي</a></div>
+            <div class="s-item"><a href="https://serp.anasrashed.com" target="_blank" rel="noopener">أداة SERP بالذكاء الإصطناعي</a></div>
+            <div class="s-item"><a href="https://writer.anasrashed.com" target="_blank" rel="noopener">أداة كتابة المقالات بالذكاء الإصطناعي</a></div>
             <div class="s-item"><a href="https://smg.anasrashed.com" target="_blank" rel="noopener">أداة منشئ خريطة الموقع</a></div>
             <div class="s-item"><a href="https://keywords.anasrashed.com" target="_blank" rel="noopener">أداة الكلمات المفتاحية</a></div>
             <div class="s-item"><a href="https://checker.anasrashed.com" target="_blank" rel="noopener">أداة فحص الموقع</a></div>
@@ -192,7 +200,6 @@
       <section id="toolBox">
         <div class="row">
 
-          <!-- Inputs -->
           <section class="card section" style="grid-area:inputs">
             <div class="field">
               <div class="label"><label for="lang">اللغة</label></div>
@@ -236,9 +243,10 @@
             </div>
 
             <div class="btns">
-              <button class="primary" id="generateBtn">توليد المقال</button>
+              <button class="primary" id="generateBtn">توليد</button>
               <button id="clearBtn">مسح</button>
-              <button class="primary" id="copyBtn">نسخ المخرجات</button>
+              <button class="primary" id="copyBtn">نسخ</button>
+              <!-- ✅ تم حذف زر تحميل PDF نهائياً -->
               <button class="danger" id="cancelBtn" disabled>إلغاء</button>
             </div>
 
@@ -246,16 +254,15 @@
             <div id="err" class="err" hidden></div>
           </section>
 
-          <!-- Outputs -->
           <section class="card section" style="grid-area:outputs">
             <div class="tabs">
-              <button class="tab active" data-tab="outline">Outline</button>
-              <button class="tab" data-tab="article">المقال</button>
-              <button class="tab" data-tab="faq">FAQ</button>
+              <button class="tab active" data-tab="outline">المحتوى</button>
+              <button class="tab" data-tab="article">المقالة</button>
+              <button class="tab" data-tab="faq">الأسئلة الشائعة</button>
             </div>
 
-            <pre class="out" id="outBox">جاهز… اكتب الفكرة واضغط "توليد المقال".</pre>
-            <div class="hint" style="margin-top:10px">النتيجة بصيغة نص/Markdown لتكون سهلة النسخ والتحرير.</div>
+            <pre class="out" id="outBox">جاهز… اكتب الفكرة واضغط "توليد".</pre>
+            <div class="hint" style="margin-top:10px">النتيجة بصيغة نص لتكون سهلة النسخ والتحرير.</div>
           </section>
 
         </div>
@@ -290,11 +297,10 @@ const cancelBtn = $('#cancelBtn');
 
 const LENGTH_MAP = { short: 700, medium: 1200, long: 1800 };
 
-/* ===== مهلة ذكية حسب الطول ===== */
 function timeoutForLength(len){
-  if(len === 'long') return 220000;   // 3:40 دقيقة
-  if(len === 'short') return 90000;   // 1:30 دقيقة
-  return 140000;                      // 2:20 دقيقة
+  if(len === 'long') return 220000;
+  if(len === 'short') return 90000;
+  return 140000;
 }
 
 function setStatus(kind, msg){
@@ -312,7 +318,6 @@ function clearErr(){
 function getTargetWords(){
   return LENGTH_MAP[lengthEl.value] || 1200;
 }
-
 function msToNice(ms){
   const s = Math.max(0, Math.round(ms/1000));
   const m = Math.floor(s/60);
@@ -320,7 +325,7 @@ function msToNice(ms){
   return m ? `${m}:${String(r).padStart(2,'0')} دقيقة` : `${s} ثانية`;
 }
 
-/* ===== عدّاد تنازلي للمهلة ===== */
+/* ===== عدّاد تنازلي ===== */
 let countdownTimer = null;
 let countdownEndsAt = 0;
 let countdownTotalMs = 0;
@@ -331,7 +336,6 @@ function stopCountdown(){
   countdownEndsAt = 0;
   countdownTotalMs = 0;
 }
-
 function startCountdown(totalMs){
   stopCountdown();
   countdownTotalMs = totalMs;
@@ -340,18 +344,16 @@ function startCountdown(totalMs){
   const render = () => {
     const remaining = countdownEndsAt - Date.now();
     const base = `مهلة: ${msToNice(countdownTotalMs)}`;
-    if (remaining <= 0){
-      timeoutInfo.textContent = `${base} (متبقي: 0:00)`;
-      return;
-    }
-    timeoutInfo.textContent = `${base} (متبقي: ${msToNice(remaining)})`;
+    timeoutInfo.textContent = remaining <= 0
+      ? `${base} (متبقي: 0:00)`
+      : `${base} (متبقي: ${msToNice(remaining)})`;
   };
 
   render();
   countdownTimer = setInterval(render, 1000);
 }
 
-/* ===== عرض FAQ بدون ** ===== */
+/* ===== مخرجات الواجهة (نص) ===== */
 function fmtOutput(data){
   const outline = (data.outline || '').trim();
   const article  = (data.article || '').trim();
@@ -367,11 +369,11 @@ function fmtOutput(data){
     outline: outline || '—',
     article: article || '—',
     faq: faqText || '—',
-    all: `OUTLINE\n\n${outline}\n\n--------------------\n\nARTICLE\n\n${article}\n\n--------------------\n\nFAQ\n\n${faqText}`
+    all: `المحتوى\n\n${outline}\n\n--------------------\n\nالمقالة\n\n${article}\n\n--------------------\n\nالأسئلة الشائعة\n\n${faqText}`
   };
 }
 
-/* ===== توليد عبر API مع تحكم Abort ===== */
+/* ===== توليد عبر API ===== */
 let currentController = null;
 let currentTimeoutId = null;
 
@@ -386,7 +388,7 @@ function setUIBusy(isBusy){
     generateBtn.textContent = '... جاري التوليد';
   } else {
     generateBtn.classList.remove('loading');
-    generateBtn.textContent = 'توليد المقال';
+    generateBtn.textContent = 'توليد';
   }
 }
 
@@ -399,8 +401,6 @@ async function aiGenerate(payload){
   currentController = controller;
 
   const timeoutMs = timeoutForLength(payload.length);
-
-  // ✅ ابدأ العداد التنازلي
   startCountdown(timeoutMs);
 
   currentTimeoutId = setTimeout(()=> {
@@ -434,7 +434,7 @@ async function aiGenerate(payload){
     return JSON.parse(text);
   } catch(e){
     if(e?.name === 'AbortError'){
-      throw new Error('تم إلغاء الطلب (انتهت المهلة أو تم الضغط على "إلغاء"). جرّب مرة ثانية، أو اختر "متوسط" بدل "طويل" إذا شبكتك بطيئة.');
+      throw new Error('تم إلغاء الطلب (انتهت المهلة أو تم الضغط على "إلغاء"). جرّب مرة ثانية.');
     }
     throw e;
   } finally {
@@ -442,10 +442,7 @@ async function aiGenerate(payload){
     currentTimeoutId = null;
     currentController = null;
 
-    // ✅ أوقف العداد بعد انتهاء الطلب (نجاح/فشل/إلغاء)
     stopCountdown();
-
-    // أعد النص الافتراضي للمهلة حسب الاختيار الحالي
     timeoutInfo.textContent = `مهلة: ${msToNice(timeoutForLength(lengthEl.value))}`;
   }
 }
@@ -474,7 +471,7 @@ clearBtn.addEventListener('click', ()=>{
   activeTab = 'outline';
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
   document.querySelector('.tab[data-tab="outline"]').classList.add('active');
-  outBox.textContent = 'جاهز… اكتب الفكرة واضغط "توليد المقال".';
+  outBox.textContent = 'جاهز… اكتب الفكرة واضغط "توليد".';
   setStatus('', '');
   clearErr();
 });
@@ -535,6 +532,7 @@ generateBtn.addEventListener('click', async ()=>{
 // init
 targetInfo.textContent = `الهدف: ${getTargetWords()} كلمة`;
 timeoutInfo.textContent = `مهلة: ${msToNice(timeoutForLength(lengthEl.value))}`;
+setUIBusy(false);
 </script>
 </body>
 </html>
