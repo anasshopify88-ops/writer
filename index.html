@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover">
-<title>أداة مجانية لكتابة مقالات بالذكاء الاصطناعي متوافقة مع SEO</title>
+<title>أداة مجانية لكتابة مقالات بالذكاء الإصطناعي متوافقه مع SEO</title>
 
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
@@ -105,6 +105,10 @@
   button.loading{opacity:.7;pointer-events:none}
   button.danger{background:#fff;border-color:#fecaca;color:#b91c1c}
   button.danger:hover{border-color:#fca5a5}
+  
+  /* زر التحميل الجديد */
+  button.download{background:#fff;border-color:var(--ok);color:var(--ok)}
+  button.download:hover{background:#f0fdf4}
 
   .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
   .tab{
@@ -132,7 +136,6 @@
     .avatar{width:104px;height:104px}
   }
 
-  /* إخفاء "وضع API" */
   #modeInfo{display:none !important;}
 </style>
 </head>
@@ -148,8 +151,8 @@
     <div class="card">
       <div class="titleRow">
         <div>
-          <h1>أداة مجانية لكتابة مقالات بالذكاء الاصطناعي متوافقة مع SEO</h1>
-          <div class="sub">اكتب الفكرة، واختر اللغة والنوع والطول — واحصل على محتوى + مقالة كاملة + الأسئلة الشائعة.</div>
+          <h1>أداة كتابة المقالات الاحترافية (Pro SEO)</h1>
+          <div class="sub">اكتب الفكرة، اختر الأسلوب، واحصل على مقال كامل بهيكلية (H2, H3, H4) متوافق مع محركات البحث.</div>
         </div>
         <img class="logo title-logo" src="https://i.imgur.com/meUEoP7.png" alt="الشعار"
              onerror="this.onerror=null; this.src='https://i.imgur.com/meUEoP7.jpg';">
@@ -167,7 +170,7 @@
 
             <div class="s-item">
               <a href="https://anasrashed.gumroad.com/l/seo-book-for-ecommerce" target="_blank" rel="noopener">
-                كتاب دليل السيو الشامل
+                كتاب دليل السيو الشامل 
               </a>
             </div>
 
@@ -193,7 +196,6 @@
             <div class="s-item"><a href="https://smg.anasrashed.com" target="_blank" rel="noopener">أداة منشئ خريطة الموقع</a></div>
             <div class="s-item"><a href="https://keywords.anasrashed.com" target="_blank" rel="noopener">أداة الكلمات المفتاحية</a></div>
             <div class="s-item"><a href="https://checker.anasrashed.com" target="_blank" rel="noopener">أداة فحص الموقع</a></div>
-            <div class="s-item"><a href="https://tinyimage.anasrashed.com" target="_blank" rel="noopener">أداة تحويل الصور الى WebP</a></div>
           </div>
         </div>
       </aside>
@@ -209,45 +211,57 @@
                 <option value="en">English</option>
                 <option value="fr">Français</option>
               </select>
-              <div class="hint">سيتم كتابة المقال بالكامل بهذه اللغة.</div>
             </div>
 
             <div class="field">
               <div class="label"><label for="type">نوع المقال</label></div>
               <select id="type">
-                <option value="definition">تعريفي</option>
-                <option value="guide" selected>دليل</option>
-                <option value="comparison">مقارنة</option>
-                <option value="list">قائمة</option>
+                <option value="definition">تعريفي (شرح مفهوم)</option>
+                <option value="guide" selected>دليل شامل (خطوات)</option>
+                <option value="comparison">مقارنة (بين منتجين/خدمات)</option>
+                <option value="list">قائمة (Listicle)</option>
                 <option value="problem">حل مشكلة</option>
               </select>
             </div>
 
+            <!-- خيار النبرة الجديد -->
             <div class="field">
-              <div class="label"><label for="idea">الفكرة/العنوان</label></div>
-              <input id="idea" type="text" placeholder="مثال: كيف تختار كلمات مفتاحية لمتجر إلكتروني؟">
-              <div class="hint">كلما كان الموضوع واضحًا، كانت النتيجة أدق.</div>
+              <div class="label"><label for="tone">نبرة الصوت / الأسلوب</label></div>
+              <select id="tone">
+                <option value="professional" selected>احترافي وخبير</option>
+                <option value="friendly">ودود وبسيط</option>
+                <option value="persuasive">تسويقي وإقناعي</option>
+                <option value="academic">أكاديمي وعلمي</option>
+                <option value="witty">ذكي ومرح</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <div class="label"><label for="idea">الفكرة / الكلمة المفتاحية</label></div>
+              <input id="idea" type="text" placeholder="مثال: أفضل استراتيجيات التسويق بالمحتوى لعام 2025">
+              <div class="hint">كلما كانت الفكرة محددة، كانت النتيجة أكثر احترافية.</div>
             </div>
 
             <div class="field">
               <div class="label"><label for="length">طول المقال</label></div>
               <select id="length">
                 <option value="short">قصير (≈ 700 كلمة)</option>
-                <option value="medium" selected>متوسط (≈ 1200 كلمة)</option>
-                <option value="long">طويل (≈ 1800 كلمة)</option>
+                <option value="medium" selected>متوسط (≈ 1500 كلمة)</option>
+                <option value="long">طويل ومفصل (≈ 2500 كلمة)</option>
               </select>
               <div class="chips">
-                <span class="chip" id="targetInfo">الهدف: 1200 كلمة</span>
+                <span class="chip" id="targetInfo">الهدف: 1500 كلمة</span>
                 <span class="chip" id="modeInfo">وضع: API</span>
-                <span class="chip" id="timeoutInfo">مهلة: —</span>
+                <span class="chip" id="timeoutInfo">المهلة: —</span>
               </div>
             </div>
 
             <div class="btns">
-              <button class="primary" id="generateBtn">توليد</button>
+              <button class="primary" id="generateBtn">توليد المقال</button>
               <button id="clearBtn">مسح</button>
               <button class="primary" id="copyBtn">نسخ</button>
-              <!-- ✅ تم حذف زر تحميل PDF نهائياً -->
+              <!-- زر التحميل الجديد -->
+              <button class="download" id="downloadBtn" disabled>تحميل TXT</button>
               <button class="danger" id="cancelBtn" disabled>إلغاء</button>
             </div>
 
@@ -257,13 +271,13 @@
 
           <section class="card section" style="grid-area:outputs">
             <div class="tabs">
-              <button class="tab active" data-tab="outline">المحتوى</button>
-              <button class="tab" data-tab="article">المقالة</button>
+              <button class="tab active" data-tab="outline">المحتوى (Outline)</button>
+              <button class="tab" data-tab="article">المقالة الكاملة</button>
               <button class="tab" data-tab="faq">الأسئلة الشائعة</button>
             </div>
 
-            <pre class="out" id="outBox">جاهز… اكتب الفكرة واضغط "توليد".</pre>
-            <div class="hint" style="margin-top:10px">النتيجة بصيغة نص لتكون سهلة النسخ والتحرير.</div>
+            <pre class="out" id="outBox">جاهز… اكتب الفكرة واختر الأسلوب واضغط "توليد المقال".</pre>
+            <div class="hint" style="margin-top:10px">المقالات المولدة تحتوي على ترويسات H2, H3, H4 لضمان أفضل هيكلية لمحركات البحث.</div>
           </section>
 
         </div>
@@ -273,6 +287,7 @@
 
 <script>
 /* ========= إعدادات API ========= */
+// ملاحظة: تأكد من أن الرابط أدناه يشير إلى الـ Worker الخاص بك
 const API_BASE = "https://article-generate.anasshopify88.workers.dev";
 const ENDPOINTS = {
   gen: API_BASE + "/api/generate",
@@ -286,6 +301,7 @@ const outBox = $('#outBox');
 
 const langEl = $('#lang');
 const typeEl = $('#type');
+const toneEl = $('#tone'); // الحقل الجديد
 const ideaEl = $('#idea');
 const lengthEl = $('#length');
 const targetInfo = $('#targetInfo');
@@ -294,14 +310,16 @@ const timeoutInfo = $('#timeoutInfo');
 const generateBtn = $('#generateBtn');
 const clearBtn = $('#clearBtn');
 const copyBtn = $('#copyBtn');
+const downloadBtn = $('#downloadBtn'); // الزر الجديد
 const cancelBtn = $('#cancelBtn');
 
-const LENGTH_MAP = { short: 700, medium: 1200, long: 1800 };
+// تعديل عدد الكلمات ليكون أكثر واقعية للمقالات الاحترافية
+const LENGTH_MAP = { short: 700, medium: 1500, long: 2500 };
 
 function timeoutForLength(len){
-  if(len === 'long') return 220000;
-  if(len === 'short') return 90000;
-  return 140000;
+  if(len === 'long') return 300000; // 5 دقائق
+  if(len === 'short') return 120000; // دقيقتين
+  return 180000; // 3 دقائق
 }
 
 function setStatus(kind, msg){
@@ -317,7 +335,7 @@ function clearErr(){
   errEl.textContent = '';
 }
 function getTargetWords(){
-  return LENGTH_MAP[lengthEl.value] || 1200;
+  return LENGTH_MAP[lengthEl.value] || 1500;
 }
 function msToNice(ms){
   const s = Math.max(0, Math.round(ms/1000));
@@ -370,7 +388,7 @@ function fmtOutput(data){
     outline: outline || '—',
     article: article || '—',
     faq: faqText || '—',
-    all: `المحتوى\n\n${outline}\n\n--------------------\n\nالمقالة\n\n${article}\n\n--------------------\n\nالأسئلة الشائعة\n\n${faqText}`
+    all: `المحتوى (Outline)\n\n${outline}\n\n====================\n\nالمقالة\n\n${article}\n\n====================\n\nالأسئلة الشائعة\n\n${faqText}`
   };
 }
 
@@ -382,20 +400,21 @@ function setUIBusy(isBusy){
   generateBtn.disabled = isBusy;
   clearBtn.disabled = isBusy;
   copyBtn.disabled = isBusy;
+  downloadBtn.disabled = isBusy || !current.all; // تفعيل التحميل فقط عند وجود محتوى
   cancelBtn.disabled = !isBusy;
 
   if(isBusy){
     generateBtn.classList.add('loading');
-    generateBtn.textContent = '... جاري التوليد';
+    generateBtn.textContent = '... جاري الكتابة والتحليل';
   } else {
     generateBtn.classList.remove('loading');
-    generateBtn.textContent = 'توليد';
+    generateBtn.textContent = 'توليد المقال';
   }
 }
 
 async function aiGenerate(payload){
   if(currentController){
-    throw new Error('يوجد طلب توليد جاري الآن. انتظر حتى ينتهي أو اضغط "إلغاء".');
+    throw new Error('يوجد طلب توليد جاري الآن.');
   }
 
   const controller = new AbortController();
@@ -435,7 +454,7 @@ async function aiGenerate(payload){
     return JSON.parse(text);
   } catch(e){
     if(e?.name === 'AbortError'){
-      throw new Error('تم إلغاء الطلب (انتهت المهلة أو تم الضغط على "إلغاء"). جرّب مرة ثانية.');
+      throw new Error('تم إلغاء الطلب (انتهت المهلة أو تم الضغط على "إلغاء").');
     }
     throw e;
   } finally {
@@ -454,6 +473,8 @@ let activeTab = 'outline';
 
 function renderTab(){
   outBox.textContent = current[activeTab] || '—';
+  // تحديث حالة زر التحميل بناءً على وجود محتوى
+  downloadBtn.disabled = !current.all;
 }
 document.querySelectorAll('.tab').forEach(btn=>{
   btn.addEventListener('click', ()=>{
@@ -472,9 +493,10 @@ clearBtn.addEventListener('click', ()=>{
   activeTab = 'outline';
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
   document.querySelector('.tab[data-tab="outline"]').classList.add('active');
-  outBox.textContent = 'جاهز… اكتب الفكرة واضغط "توليد".';
+  outBox.textContent = 'جاهز… اكتب الفكرة واختر الأسلوب واضغط "توليد المقال".';
   setStatus('', '');
   clearErr();
+  downloadBtn.disabled = true;
 });
 
 copyBtn.addEventListener('click', async ()=>{
@@ -484,6 +506,23 @@ copyBtn.addEventListener('click', async ()=>{
   }catch(e){
     setStatus('bad', 'تعذر النسخ.');
   }
+});
+
+/* ===== وظيفة التحميل TXT ===== */
+downloadBtn.addEventListener('click', ()=>{
+  if(!current.all) return;
+  const blob = new Blob([current.all], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  // تنظيف اسم الملف
+  let safeName = (ideaEl.value || 'article').replace(/[^a-z0-9\u0600-\u06FF]/gi, '_').substring(0, 50);
+  a.download = `${safeName}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  setStatus('ok', 'تم تحميل الملف.');
 });
 
 lengthEl.addEventListener('change', ()=>{
@@ -505,13 +544,14 @@ generateBtn.addEventListener('click', async ()=>{
   if(!idea){ setStatus('warn', 'اكتب الفكرة/العنوان أولاً.'); return; }
 
   setUIBusy(true);
-  setStatus('warn', 'جاري التوليد… لا تغلق الصفحة.');
+  setStatus('warn', 'جاري توليد المقال… العملية تأخذ وقتاً لضمان الجودة.');
 
   try{
     const payload = {
       idea,
       lang: langEl.value,
       kind: typeEl.value,
+      tone: toneEl.value, // إرسال النبرة
       length: lengthEl.value,
       target_words: getTargetWords()
     };
