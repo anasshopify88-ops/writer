@@ -634,7 +634,7 @@ copyHtmlCodeBtn.addEventListener('click', async () => {
     if(!cleanHtml) return;
     try {
         await navigator.clipboard.writeText(cleanHtml);
-        setStatus('ok', 'تم نسخ كود HTML! الصقه الآن في ووردبريس (Custom HTML).');
+        setStatus('ok', 'تم نسخ كود HTML! الصقه الآن في مدونتك (Custom HTML).');
     } catch(e) {
         setStatus('bad', 'تعذر النسخ.');
     }
