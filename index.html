@@ -35,7 +35,7 @@
   }
   .btn:hover{transform:translateY(-2px); border-color:#cbd5e1}
   .btn.home{background:#000; color:#fff; border-color:#000}
-  .btn:disabled{opacity:.6; cursor:not-allowed}
+  
   .btn.contactTop{ background: var(--accent); border-color: var(--accent); color:#fff; justify-content:center; }
   .btn.contactTop:hover{ background: var(--accent); border-color: var(--accent); color:#fff; }
 
@@ -46,10 +46,28 @@
   .logo{width:100%; max-width:180px; align-self:center; object-fit:contain; object-position:center; background:#fff; border-radius:12px; border:1px solid var(--border); padding:8px}
   .title-logo{width:180px; max-width:180px; align-self:center}
 
-  .layout{ display:grid; grid-template-columns: var(--sidebar-w) 1fr; gap:14px; align-items:stretch; }
-  #sidePanel{display:flex; height:100%; min-height:0; overflow:hidden;}
-  @media (min-width:981px){ #sidePanel{ contain:size; } }
-  .sidebar-card{ flex:1 1 auto; height:100%; display:flex; flex-direction:column; gap:10px; min-height:0; overflow:auto; }
+  /* التخطيط العام */
+  .layout{
+    display:grid;
+    grid-template-columns: var(--sidebar-w) 1fr;
+    gap:14px;
+    align-items:stretch; /* يضمن تساوي الارتفاع */
+  }
+
+  /* السايدبار - تم تعديله ليظهر كاملاً */
+  #sidePanel{
+    display:block; 
+    height:auto; 
+    min-height:0; 
+    overflow:visible;
+  }
+  
+  .sidebar-card{
+    height:100%; 
+    display:flex; flex-direction:column; gap:10px; 
+    overflow:visible;
+  }
+
   .avatar{width:112px;height:112px;border-radius:50%;background:#fff;padding:6px;object-fit:contain;object-position:center;border:1px solid var(--border);align-self:center}
   .s-list{display:grid; gap:8px}
   .s-item a, .s-text{
@@ -59,92 +77,23 @@
   }
   .s-item a:hover{transform:translateY(-2px); border-color:#cbd5e1; box-shadow:0 8px 18px rgba(15,23,42,.08)}
 
-  #toolBox{display:block; min-height:0}
-  .row{
-    display:grid; gap:16px; align-items:stretch;
-    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
-    grid-template-areas:"inputs outputs";
-    min-width:0;
-  }
-  @media (max-width:1024px){
-    .row{ grid-template-columns:1fr; grid-template-areas:"inputs" "outputs"; gap:12px; }
-  }
+  /* يمين: منطقة الرسالة */
+  #toolBox{display:block; height: 100%; min-height:0}
 
-  .card.section{padding:16px}
-  .field{margin-bottom:14px}
-  .field:last-child{ margin-bottom: 0 }
-  .label{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;font-weight:700;font-size:14px}
-
-  input[type="text"], select, textarea{
-    width:100%;padding:14px;border:1px solid var(--border);border-radius:14px;background:#fff;color:var(--text)
-  }
-  .hint{font-size:12px;color:var(--muted)}
-
-  .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
-  button{padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--text);cursor:pointer}
-  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-  button.loading{opacity:.7;pointer-events:none}
-  button.danger{background:#fff;border-color:#fecaca;color:#b91c1c}
-  button.download{background:#fff;border-color:var(--ok);color:var(--ok)}
-  button.download:hover{background:#f0fdf4}
-  
-  /* Progress Bar Styles */
-  .progress-wrap {
-    margin-top: 15px;
-    background: #e2e8f0;
-    border-radius: 99px;
-    height: 8px;
-    overflow: hidden;
-    display: none; /* hidden by default */
-  }
-  .progress-bar {
-    height: 100%;
-    background: var(--accent);
-    width: 0%;
-    transition: width 0.3s ease;
-    border-radius: 99px;
-  }
-  .progress-text {
-    font-size: 11px;
-    color: var(--muted);
-    text-align: center;
-    margin-top: 4px;
-    font-weight: 700;
-  }
-
-  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-  .tab{
-    padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:#fff;
-    font-weight:800;font-size:12px;cursor:pointer;
-  }
-  .tab.active{border-color:#cbd5e1; box-shadow:0 6px 16px rgba(15,23,42,.08)}
-  pre.out{
-    margin:0; padding:14px; border:1px solid var(--border); border-radius:14px;
-    background:#fff; white-space:pre-wrap; word-break:break-word; min-height:260px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-    font-size:12px;
-  }
-
-  .status{font-size:12px;margin-top:8px;display:flex;align-items:center;gap:8px}
-  .status.ok{color:var(--ok)} .status.warn{color:var(--warn)} .status.bad{color:var(--error)}
-  .status.hidden{display:none}
-  .err{margin-top:8px;font-size:12px;color:var(--error)}
-  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-  .chip{padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:12px;color:var(--muted)}
+  /* زر الانتقال الكبير */
+  a.btn.primary {background:var(--accent);border-color:var(--accent);color:#fff}
 
   @media (max-width:980px){
     .layout{grid-template-columns:1fr}
-    #sidePanel{height:auto; overflow:visible;}
     .avatar{width:104px;height:104px}
   }
-  #modeInfo{display:none !important;}
 </style>
 </head>
 
 <body>
   <div class="wrap" id="app">
     <div class="topbar">
-      <button class="btn" id="backBtn">رجوع</button>
+      <button class="btn" id="backBtn" onclick="history.back()">رجوع</button>
       <a class="btn home" id="homeBtn" href="https://anasrashed.com" rel="noopener">الرئيسية</a>
       <a class="btn contactTop" id="contactTopBtn" href="https://contact.anasrashed.com" target="_blank" rel="noopener">تواصل معي</a>
     </div>
@@ -160,6 +109,7 @@
     </div>
 
     <div class="layout" style="margin-top:12px">
+      <!-- السايدبار -->
       <aside id="sidePanel">
         <div class="card sidebar-card">
           <img class="avatar" src="https://i.imgur.com/B3UkEQ0.jpg" alt="صورتي" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='https://i.imgur.com/B3UkEQ0.png';">
@@ -171,576 +121,37 @@
             <div class="s-item"><span class="s-text">تحسين داخلي</span></div>
             <div class="s-item"><span class="s-text">تحسين خارجي</span></div>
             <div class="s-item"><span class="s-text">استخراج الكلمات المفتاحية للمنافسين</span></div>
+            <div class="s-item"><span class="s-text">تفعيل خريطة الموقع للباقة بلس</span></div>
+
             <div class="sub" style="text-align:center; font-size:18px; margin-top:10px;"><b>أدوات سيو احترافية</b></div>
             <div class="s-item"><a href="https://serp.anasrashed.com" target="_blank" rel="noopener">أداة SERP AI</a></div>
             <div class="s-item"><a href="https://writer.anasrashed.com" target="_blank" rel="noopener">أداة كتابة المقالات</a></div>
             <div class="s-item"><a href="https://smg.anasrashed.com" target="_blank" rel="noopener">منشئ خريطة الموقع</a></div>
             <div class="s-item"><a href="https://keywords.anasrashed.com" target="_blank" rel="noopener">أداة الكلمات المفتاحية</a></div>
             <div class="s-item"><a href="https://checker.anasrashed.com" target="_blank" rel="noopener">فحص الموقع</a></div>
+            <!-- ✅ الأداة الجديدة -->
+            <div class="s-item"><a href="https://tinyimage.anasrashed.com" target="_blank" rel="noopener">تحويل الصور الى WebP</a></div>
           </div>
         </div>
       </aside>
 
+      <!-- رسالة الانتقال -->
       <section id="toolBox">
-        <div class="row">
-          <section class="card section" style="grid-area:inputs">
+        <div class="card" style="text-align:center; padding:60px 20px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:24px; min-height:400px; height:100%;">
             
-            <div class="field">
-              <div class="label"><label for="lang">اللغة</label></div>
-              <select id="lang">
-                <option value="ar" selected>عربي</option>
-                <option value="en">English</option>
-                <option value="fr">Français</option>
-              </select>
-            </div>
+            <div style="font-size:48px;">🚀</div>
 
-            <div class="field">
-              <div class="label"><label for="type">نوع المقال</label></div>
-              <select id="type">
-                <option value="definition">تعريفي (شرح مفهوم)</option>
-                <option value="guide" selected>دليل شامل (خطوات)</option>
-                <option value="comparison">مقارنة (بين منتجين/خدمات)</option>
-                <option value="list">قائمة (Listicle)</option>
-                <option value="problem">حل مشكلة</option>
-              </select>
-            </div>
+            <h2 style="margin:0; font-size:clamp(20px, 4vw, 28px); color:var(--text); line-height:1.4;">
+                تم الإنتقال الى منصة أدوات أنس راشد
+            </h2>
+            
+            <a href="https://tools.anasrashed.com" class="btn primary" style="font-size:16px; padding:12px 24px; text-decoration:none; display:inline-block;">
+                انتقل الى المنصة
+            </a>
 
-            <div class="field">
-              <div class="label"><label for="tone">نبرة الصوت / الأسلوب</label></div>
-              <select id="tone">
-                <option value="professional" selected>احترافي وخبير</option>
-                <option value="friendly">ودود وبسيط</option>
-                <option value="persuasive">تسويقي وإقناعي</option>
-                <option value="academic">أكاديمي وعلمي</option>
-                <option value="witty">ذكي ومرح</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <div class="label"><label for="idea">الفكرة / الكلمة الرئيسية</label></div>
-              <input id="idea" type="text" placeholder="مثال: أفضل استراتيجيات التسويق بالمحتوى">
-            </div>
-
-            <!-- حقل LSI الجديد -->
-            <div class="field">
-              <div class="label"><label for="lsi">الكلمات المفتاحية الفرعية (LSI) - اختياري</label></div>
-              <input id="lsi" type="text" placeholder="مثال: تحسين محركات البحث، زيادة الزيارات، باك لينك (افصل بفاصلة)">
-              <div class="hint">سيحاول الذكاء الاصطناعي تضمين هذه الكلمات بشكل طبيعي في السياق.</div>
-            </div>
-
-            <div class="field">
-              <div class="label"><label for="length">طول المقال</label></div>
-              <select id="length">
-                <option value="short">قصير (≈ 700 كلمة)</option>
-                <option value="medium" selected>متوسط (≈ 1500 كلمة)</option>
-                <option value="long">طويل ومفصل (≈ 2500 كلمة)</option>
-              </select>
-              <div class="chips">
-                <span class="chip" id="targetInfo">الهدف: 1500 كلمة</span>
-                <span class="chip" id="timeoutInfo">المهلة: —</span>
-              </div>
-            </div>
-
-            <div class="btns">
-              <button class="primary" id="generateBtn">توليد المقال</button>
-              <button id="clearBtn">مسح</button>
-              <button class="primary" id="copyBtn">نسخ</button>
-              
-              <!-- أزرار التحميل -->
-              <button class="download" id="downloadTxtBtn" disabled>تحميل TXT</button>
-              <button class="download" id="downloadHtmlBtn" disabled>تحميل HTML</button>
-              
-              <button class="danger" id="cancelBtn" disabled>إلغاء</button>
-            </div>
-
-            <!-- شريط التقدم الذكي -->
-            <div id="progressContainer" style="display:none">
-              <div class="progress-wrap">
-                <div class="progress-bar" id="progressBar"></div>
-              </div>
-              <div class="progress-text" id="progressText">جاري البدء...</div>
-            </div>
-
-            <div id="status" class="status hidden"></div>
-            <div id="err" class="err" hidden></div>
-          </section>
-
-          <section class="card section" style="grid-area:outputs">
-            <div class="tabs">
-              <button class="tab active" data-tab="outline">الهيكل (Outline)</button>
-              <button class="tab" data-tab="article">المقالة</button>
-              <button class="tab" data-tab="faq">الأسئلة الشائعة</button>
-            </div>
-
-            <pre class="out" id="outBox">جاهز… اكتب الفكرة واضغط "توليد المقال".</pre>
-            <div class="hint" style="margin-top:10px">
-              المقال يشمل: ترويسات (H2-H4) + جداول مقارنة (إذا لزم) + وصف للصور المقترحة.
-            </div>
-          </section>
         </div>
       </section>
     </div>
   </div>
-<script>
-/* ========= إعدادات API ========= */
-const API_BASE = "https://article-generate.anasshopify88.workers.dev";
-const ENDPOINTS = {
-  gen: API_BASE + "/api/generate",
-  ping: API_BASE + "/ping"
-};
-
-const $ = s => document.querySelector(s);
-const statusEl = $('#status');
-const errEl = $('#err');
-const outBox = $('#outBox');
-
-const langEl = $('#lang');
-const typeEl = $('#type');
-const toneEl = $('#tone');
-const ideaEl = $('#idea');
-const lsiEl = $('#lsi');
-const lengthEl = $('#length');
-const targetInfo = $('#targetInfo');
-const timeoutInfo = $('#timeoutInfo');
-
-const progressBar = $('#progressBar');
-const progressText = $('#progressText');
-const progressContainer = $('#progressContainer');
-
-const generateBtn = $('#generateBtn');
-const clearBtn = $('#clearBtn');
-const copyBtn = $('#copyBtn');
-const downloadTxtBtn = $('#downloadTxtBtn');
-const downloadHtmlBtn = $('#downloadHtmlBtn');
-const cancelBtn = $('#cancelBtn');
-
-/* === زر جديد لنسخ كود HTML (يجب إضافته في HTML أيضاً بجانب الأزرار) === */
-// سنقوم بإنشائه برمجياً إذا لم ترد تعديل الـ HTML يدوياً، أو يمكنك إضافته في الأعلى
-// لكن للأفضلية، سأفترض أنك ستضيف هذا الزر في الـ HTML:
-// <button class="primary" id="copyHtmlCodeBtn" disabled>نسخ كود HTML</button>
-// سأقوم هنا بإضافته برمجياً في حال نسيت إضافته في الـ HTML
-if(!document.getElementById('copyHtmlCodeBtn')) {
-    const btnHtml = `<button class="download" id="copyHtmlCodeBtn" disabled style="border-color:#2563eb; color:#2563eb;">نسخ كود HTML للمدونة</button>`;
-    downloadHtmlBtn.insertAdjacentHTML('beforebegin', btnHtml);
-}
-const copyHtmlCodeBtn = $('#copyHtmlCodeBtn');
-
-
-const LENGTH_MAP = { short: 700, medium: 1500, long: 2500 };
-
-function timeoutForLength(len){
-  if(len === 'long') return 300000; 
-  if(len === 'short') return 120000; 
-  return 180000; 
-}
-
-function setStatus(kind, msg){
-  statusEl.className = 'status ' + (kind||'') + (msg ? '' : ' hidden');
-  statusEl.textContent = msg || '';
-}
-function showErr(msg){
-  errEl.hidden = false;
-  errEl.textContent = msg;
-}
-function clearErr(){
-  errEl.hidden = true;
-  errEl.textContent = '';
-}
-function getTargetWords(){
-  return LENGTH_MAP[lengthEl.value] || 1500;
-}
-function msToNice(ms){
-  const s = Math.max(0, Math.round(ms/1000));
-  const m = Math.floor(s/60);
-  const r = s % 60;
-  return m ? `${m}:${String(r).padStart(2,'0')} دقيقة` : `${s} ثانية`;
-}
-
-/* ===== إدارة شريط التقدم الذكي ===== */
-let progressInterval = null;
-function startSmartProgress(duration) {
-  progressContainer.style.display = 'block';
-  let p = 0;
-  progressBar.style.width = '0%';
-  progressText.textContent = 'جاري تحليل الكلمات المفتاحية والمنافسين...';
-  
-  const step = 100 / (duration / 1000); 
-
-  progressInterval = setInterval(() => {
-    if (p >= 95) {
-      // wait
-    } else {
-      p += (Math.random() * 0.5); 
-    }
-    
-    progressBar.style.width = Math.min(p, 98) + '%';
-
-    if(p > 10 && p < 30) progressText.textContent = 'جاري بناء الهيكل الأساسي (H2, H3)...';
-    else if(p >= 30 && p < 60) progressText.textContent = 'جاري كتابة المحتوى وتنسيق الفقرات...';
-    else if(p >= 60 && p < 80) progressText.textContent = 'إضافة جداول المقارنة ووصف الصور...';
-    else if(p >= 80) progressText.textContent = 'المراجعة النهائية وتحسين الـ SEO...';
-
-  }, 100);
-}
-function endSmartProgress() {
-  if(progressInterval) clearInterval(progressInterval);
-  progressBar.style.width = '100%';
-  progressText.textContent = 'تم الانتهاء!';
-  setTimeout(() => {
-    progressContainer.style.display = 'none';
-  }, 2000);
-}
-
-/* ===== عداد التنازلي للمهلة ===== */
-let countdownTimer = null;
-let countdownEndsAt = 0;
-function stopCountdown(){
-  if(countdownTimer) clearInterval(countdownTimer);
-  countdownTimer = null;
-}
-function startCountdown(totalMs){
-  stopCountdown();
-  countdownEndsAt = Date.now() + totalMs;
-  const render = () => {
-    const remaining = countdownEndsAt - Date.now();
-    timeoutInfo.textContent = remaining <= 0
-      ? `المهلة (0:00)`
-      : `المهلة: ${msToNice(remaining)}`;
-  };
-  render();
-  countdownTimer = setInterval(render, 1000);
-}
-
-/* ===== تنسيق المخرجات ===== */
-function fmtOutput(data){
-  const outline = (data.outline || '').trim();
-  const article  = (data.article || '').trim();
-  const faq = Array.isArray(data.faq) ? data.faq : [];
-
-  const faqText = faq.map((x,i)=> `س${i+1}: ${x.q}\n${x.a}`).join('\n\n');
-
-  return {
-    outline: outline || '—',
-    article: article || '—',
-    faq: faqText || '—',
-    all: `=== الهيكل ===\n${outline}\n\n=== المقال ===\n${article}\n\n=== الأسئلة الشائعة ===\n${faqText}`
-  };
-}
-
-/* ===== تحويل المقال إلى كود HTML نظيف (Blog Safe) ===== */
-function generateCleanHtml() {
-  if(!current.article) return '';
-
-  // نبدأ بـ Div نظيف لعدم تكسير تصميم الموقع
-  let html = `<!-- Start of Article -->\n<div class="article-content">\n\n`;
-  
-  // إضافة مقدمة بسيطة للكلمات المفتاحية (اختياري)
-  if(lsiEl.value) {
-      html += `<p class="meta-tags" style="font-size:0.9em;color:#666;"><em>كلمات ذات صلة: ${lsiEl.value}</em></p>\n<hr />\n\n`;
-  }
-
-  let lines = current.article.split('\n');
-  let inTable = false;
-  let listMode = false;
-
-  lines.forEach(line => {
-    line = line.trim();
-    if(!line) return;
-
-    // Headings
-    if(line.startsWith('H2:')) {
-      if(listMode) { html += '</ul>\n'; listMode = false; }
-      html += `<h2>${line.replace('H2:','').trim()}</h2>\n`;
-    } 
-    else if(line.startsWith('H3:')) {
-      if(listMode) { html += '</ul>\n'; listMode = false; }
-      html += `<h3>${line.replace('H3:','').trim()}</h3>\n`;
-    } 
-    else if(line.startsWith('H4:')) {
-      if(listMode) { html += '</ul>\n'; listMode = false; }
-      html += `<h4>${line.replace('H4:','').trim()}</h4>\n`;
-    } 
-    // Image Prompts (نجعلها كتعليق أو ملاحظة مميزة)
-    else if(line.includes('[IMAGE PROMPT:')) {
-      if(listMode) { html += '</ul>\n'; listMode = false; }
-      const promptText = line.replace(/\[IMAGE PROMPT:|\]/g,'').trim();
-      html += `<div style="background:#f3f4f6; padding:15px; border-right:4px solid #2563eb; margin:15px 0; font-size:0.9em;">
-        <strong>📸 صورة مقترحة:</strong> ${promptText}
-      </div>\n`;
-    }
-    // Tables (Markdown Style to HTML)
-    else if(line.startsWith('|')) {
-      if(listMode) { html += '</ul>\n'; listMode = false; }
-      if(!inTable) { 
-          html += '<table border="1" style="width:100%; border-collapse:collapse; margin:20px 0;">\n'; 
-          inTable = true; 
-      }
-      
-      let cols = line.split('|').filter(c => c.trim() !== '');
-      if(line.includes('---')) {
-         // تخطي سطر التنسيق في المارك داون
-      } else {
-         // نفترض أن أول صف هو العناوين إذا كنا في بداية الجدول
-         // (للتبسيط سنجعل الكل td إلا إذا أردنا تعقيد الكود)
-         html += '  <tr>\n';
-         cols.forEach(c => {
-             html += `    <td style="padding:10px; border:1px solid #ddd;">${c.trim()}</td>\n`;
-         });
-         html += '  </tr>\n';
-      }
-    } 
-    // Lists (Simple detection)
-    else if(line.startsWith('- ') || line.startsWith('• ')) {
-        if(!listMode) { html += '<ul>\n'; listMode = true; }
-        html += `  <li>${line.replace(/^[-•]\s+/,'').trim()}</li>\n`;
-    }
-    // Normal Paragraphs
-    else {
-      if(inTable && !line.startsWith('|')) { html += '</table>\n'; inTable = false; }
-      if(listMode) { html += '</ul>\n'; listMode = false; }
-      html += `<p>${line}</p>\n`;
-    }
-  });
-
-  if(inTable) html += '</table>\n';
-  if(listMode) html += '</ul>\n';
-
-  // FAQ Section
-  if(current.faq) {
-    html += `\n<hr />\n<h2>الأسئلة الشائعة</h2>\n<div class="faq-section">\n`;
-    let faqLines = current.faq.split('\n');
-    faqLines.forEach(l => {
-        if(l.startsWith('س')) html += `  <h3>${l}</h3>\n`;
-        else if(l.trim()) html += `  <p>${l}</p>\n`;
-    });
-    html += `</div>\n`;
-  }
-
-  html += `\n</div><!-- End of Article -->`;
-  return html;
-}
-
-/* ===== الاتصال بـ API ===== */
-let currentController = null;
-let currentTimeoutId = null;
-
-function setUIBusy(isBusy){
-  generateBtn.disabled = isBusy;
-  clearBtn.disabled = isBusy;
-  copyBtn.disabled = isBusy;
-  downloadTxtBtn.disabled = isBusy || !current.all;
-  downloadHtmlBtn.disabled = isBusy || !current.all;
-  copyHtmlCodeBtn.disabled = isBusy || !current.all;
-  cancelBtn.disabled = !isBusy;
-
-  if(isBusy){
-    generateBtn.classList.add('loading');
-    generateBtn.textContent = '... جاري العمل';
-  } else {
-    generateBtn.classList.remove('loading');
-    generateBtn.textContent = 'توليد المقال';
-  }
-}
-
-async function aiGenerate(payload){
-  if(currentController) throw new Error('يوجد طلب قيد التنفيذ.');
-
-  const controller = new AbortController();
-  currentController = controller;
-
-  const timeoutMs = timeoutForLength(payload.length);
-  startCountdown(timeoutMs);
-  startSmartProgress(timeoutMs * 0.8); 
-
-  currentTimeoutId = setTimeout(()=> {
-    try { controller.abort(); } catch(e){}
-  }, timeoutMs);
-
-  try{
-    const resp = await fetch(ENDPOINTS.gen, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(payload),
-      mode:'cors',
-      signal: controller.signal
-    });
-
-    const text = await resp.text();
-    if(!resp.ok){
-      let msg = text;
-      try{ msg = JSON.parse(text).message; }catch(e){}
-      throw new Error(msg || `HTTP ${resp.status}`);
-    }
-
-    return JSON.parse(text);
-  } catch(e){
-    if(e?.name === 'AbortError') throw new Error('تم إلغاء الطلب.');
-    throw e;
-  } finally {
-    if(currentTimeoutId) clearTimeout(currentTimeoutId);
-    currentTimeoutId = null;
-    currentController = null;
-    stopCountdown();
-    endSmartProgress();
-    timeoutInfo.textContent = `المهلة: ${msToNice(timeoutForLength(lengthEl.value))}`;
-  }
-}
-
-/* ===== Tabs Logic ===== */
-let current = { outline:'', article:'', faq:'', all:'' };
-let activeTab = 'outline';
-
-function renderTab(){
-  outBox.textContent = current[activeTab] || '—';
-  const hasData = !!current.all;
-  downloadTxtBtn.disabled = !hasData;
-  downloadHtmlBtn.disabled = !hasData;
-  copyHtmlCodeBtn.disabled = !hasData;
-}
-document.querySelectorAll('.tab').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    activeTab = btn.dataset.tab;
-    renderTab();
-  });
-});
-
-$('#backBtn').addEventListener('click', ()=>history.back());
-
-clearBtn.addEventListener('click', ()=>{
-  ideaEl.value = '';
-  lsiEl.value = '';
-  current = { outline:'', article:'', faq:'', all:'' };
-  activeTab = 'outline';
-  renderTab();
-  outBox.textContent = 'جاهز… اكتب الفكرة واضغط "توليد المقال".';
-  setStatus('', '');
-  clearErr();
-  progressBar.style.width='0%';
-  progressContainer.style.display='none';
-});
-
-copyBtn.addEventListener('click', async ()=>{
-  try{
-    await navigator.clipboard.writeText(current.all || outBox.textContent || '');
-    setStatus('ok', 'تم نسخ النص.');
-  }catch(e){ setStatus('bad', 'تعذر النسخ.'); }
-});
-
-/* ===== وظيفة زر نسخ كود HTML للمدونة (الأهم) ===== */
-copyHtmlCodeBtn.addEventListener('click', async () => {
-    const cleanHtml = generateCleanHtml();
-    if(!cleanHtml) return;
-    try {
-        await navigator.clipboard.writeText(cleanHtml);
-        setStatus('ok', 'تم نسخ كود HTML! الصقه الآن في مدونتك (Custom HTML).');
-    } catch(e) {
-        setStatus('bad', 'تعذر النسخ.');
-    }
-});
-
-/* ===== تحميل TXT ===== */
-downloadTxtBtn.addEventListener('click', ()=>{
-  if(!current.all) return;
-  const blob = new Blob([current.all], { type: "text/plain;charset=utf-8" });
-  downloadFile(blob, 'txt');
-});
-
-/* ===== تحميل HTML كملف (Preview) ===== */
-downloadHtmlBtn.addEventListener('click', ()=>{
-  if(!current.article) return;
-  const cleanContent = generateCleanHtml();
-  
-  // هنا نغلف الكود النظيف داخل صفحة ويب كاملة فقط لأغراض المعاينة على الجهاز
-  let fullPage = `
-<!DOCTYPE html>
-<html dir="rtl" lang="ar">
-<head>
-<meta charset="UTF-8">
-<title>${ideaEl.value}</title>
-<style>
-  body{font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height:1.8; max-width:800px; margin:40px auto; padding:20px; color:#333;} 
-  h2{color:#1e40af; border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-top:40px;} 
-  h3{color:#1e3a8a; margin-top:30px;}
-  table{width:100%; border-collapse:collapse; margin:20px 0;} 
-  td, th{border:1px solid #cbd5e1; padding:12px; text-align:right;} 
-  blockquote{background:#f8fafc; border-right:5px solid #2563eb; margin:20px 0; padding:15px; font-style:italic;}
-  .article-content { background:#fff; padding:40px; border-radius:10px; box-shadow:0 10px 25px rgba(0,0,0,0.05); }
-</style>
-</head>
-<body>
-  <div style="text-align:center; margin-bottom:40px;">
-    <h1>${ideaEl.value}</h1>
-    <p style="color:#64748b;">تم التوليد بواسطة أداة أنس راشد للذكاء الاصطناعي</p>
-  </div>
-  ${cleanContent}
-</body></html>`;
-  
-  const blob = new Blob([fullPage], { type: "text/html;charset=utf-8" });
-  downloadFile(blob, 'html');
-});
-
-function downloadFile(blob, ext) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  let safeName = (ideaEl.value || 'article').replace(/[^a-z0-9\u0600-\u06FF]/gi, '_').substring(0, 50);
-  a.download = `${safeName}.${ext}`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  setStatus('ok', `تم تحميل ملف ${ext.toUpperCase()}.`);
-}
-
-lengthEl.addEventListener('change', ()=>{
-  targetInfo.textContent = `الهدف: ${getTargetWords()} كلمة`;
-  timeoutInfo.textContent = `المهلة: ${msToNice(timeoutForLength(lengthEl.value))}`;
-});
-
-cancelBtn.addEventListener('click', ()=>{
-  if(currentController){
-    try { currentController.abort(); } catch(e){}
-    setStatus('warn', 'تم إلغاء التوليد.');
-  }
-});
-
-generateBtn.addEventListener('click', async ()=>{
-  clearErr(); setStatus('', '');
-  const idea = (ideaEl.value || '').trim();
-  if(!idea){ setStatus('warn', 'اكتب الفكرة/العنوان أولاً.'); return; }
-  setUIBusy(true);
-  setStatus('warn', 'جاري توليد المقال… انتظر قليلاً.');
-
-  try{
-    const payload = {
-      idea,
-      lsi: lsiEl.value, 
-      lang: langEl.value,
-      kind: typeEl.value,
-      tone: toneEl.value,
-      length: lengthEl.value,
-      target_words: getTargetWords()
-    };
-
-    const data = await aiGenerate(payload);
-    const out = fmtOutput(data);
-    current = out;
-    renderTab();
-
-    setStatus('ok', 'تم توليد المقال بنجاح.');
-  }catch(e){
-    setStatus('bad', 'فشل التوليد.');
-    showErr('خطأ: ' + String(e?.message || e || ''));
-  }finally{
-    setUIBusy(false);
-  }
-});
-
-targetInfo.textContent = `الهدف: ${getTargetWords()} كلمة`;
-timeoutInfo.textContent = `المهلة: ${msToNice(timeoutForLength(lengthEl.value))}`;
-setUIBusy(false);
-</script>
 </body>
 </html>
